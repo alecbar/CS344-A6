@@ -1,4 +1,5 @@
 use std::env; // to get arugments passed to the program
+use std::thread;
 
 /*
 * Print the number of partitions and the size of each partition
@@ -123,8 +124,21 @@ fn main() {
 
     // Change the following code to create 2 threads that run concurrently and each of which uses map_data() function to process one of the two partitions
 
-    intermediate_sums.push(map_data(&xs[0]));
-    intermediate_sums.push(map_data(&xs[1]));
+    // Copy vectors so we can move them to closure
+    let vec_1 =  Vec::clone(&xs[0]);
+    let vec_2 =  Vec::clone(&xs[1]);
+
+    // Spawn threads
+    let handle_1 = thread::spawn(move || map_data(&vec_1));
+    let handle_2 = thread::spawn(move || map_data(&vec_2));
+
+    // Wait for threads to finish and get result
+    let sum_1 = handle_1.join().unwrap();
+    let sum_2 = handle_2.join().unwrap();
+
+    // Push to sum vector
+    intermediate_sums.push(sum_1);
+    intermediate_sums.push(sum_2);
 
     // CHANGE CODE END: Don't change any code below this line until the next CHANGE CODE comment
 
