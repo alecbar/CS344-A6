@@ -151,6 +151,7 @@ fn main() {
 
     // CHANGE CODE: Add code that does the following:
     // 1. Calls partition_data to partition the data into equal partitions
+    let partitions = partition_data(num_partitions, &v);
     // 2. Calls print_partition_info to print info on the partitions that have been created
     // 3. Creates one thread per partition and uses each thread to concurrently process one partition
     // 4. Collects the intermediate sums from all the threads
@@ -175,6 +176,42 @@ fn main() {
 * 
 */
 fn partition_data(num_partitions: usize, v: &Vec<usize>) -> Vec<Vec<usize>>{
-    // Remove the following line which has been added to remove a compiler error
-    partition_data_in_two(v)
+
+    // Calculate partition size and any remainder
+    let partition_size = v.len() / num_partitions;
+    let remainder = v.len() % num_partitions;
+
+    // Vector for size of each vector partition
+    let mut sizes: Vec<usize> = (0..num_partitions).map(|_| partition_size).collect();
+
+    // If there is remainder, we will increase vector size 1 at a time
+    if remainder > 0{
+        for i in 0..remainder {
+            sizes[i] += 1;
+        }
+    }
+
+    // Create a vector that will contain vectors of integers
+    let mut partitions: Vec<Vec<usize>> = Vec::new();
+
+    // Track where we are in v
+    let mut v_index: usize = 0;
+
+    // Add numbers each paritition and size
+    for size in sizes{
+        // Create partition
+        let mut partition: Vec<usize> = Vec::new();
+
+        // Add numbers
+        for _ in 0..size{
+            partition.push(v[v_index]);
+            v_index += 1;
+        }
+
+        // Push to partitions
+        partitions.push(partition)
+    }
+
+    // Return the result vector
+    partitions
 }
